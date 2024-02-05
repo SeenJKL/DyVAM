@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ host }} Page</title>
+  </head>
+  <body>
+    <h1><a href="{{ url_for('index')}}">Home</a></h1>
+    <h1>{{ host }} Page</h1>
+    <h2>Documents for {{ host }}</h2>
+    <ul>
+      <li>_id: {{ document._id|default('Not Found') }}</li>
+      <li>@name: {{ document['@name']|default('Not Found') }}</li>
+      <li>@host: {{ document['@host']|default('Not Found') }}</li>
+      <li>@port: {{ document['@port']|default('Not Found') }}</li>
+      <li>@ssl: {{ document['@ssl']|default('Not Found') }}</li>
+      <li>
+        Generated time: {{document['generated_time']|default('Not Found')}}
+      </li>
+    </ul>
+    <h2>Web Vulnerabilities</h2>
+    <form action="/acknowledge" method="post">
+      <ul>
+        {% if document.alerts %} {% for alert_key, alert_value in
+        document.alerts.items() %}
+        <li>
+          <input
+            type="checkbox"
+            name="acknowledge_alerts"
+            value="{{ alert_key }}"
+            id="{{ alert_key }}"
+            {%
+            if
+            alert_value.acknowledge
+            %}checked{%
+            endif
+            %}
+          />
+          <label for="{{ alert_key }}">
+            <strong
+              style="color: {% if alert_value.acknowledge %}green{% else %}red{% endif %};"
+            >
+              Alert:</strong
+            >
+            {{ alert_value.name|default('Not Found') }}<br />
+            <strong>Alert Reference:</strong> {{
+            alert_value.alertRef|default('Not Found') }}<br />
+            <strong>Owasp Top 10 Group:</strong> {{ alert_value.
+            OwaspTop10Group|default('Not Found') }}<br />
+            <strong>CVSS:</strong> {{ alert_value.CVSS|default('Not Found')
+            }}<br />
+            <strong>OrgCVSS:</strong> {{ alert_value.OrgCVSS|default('Not
+            Found') }}<br />
+            <strong>NewCVSS :</strong> {{ alert_value.NewCVSS|default('Not
+            Found') }}<br />
+            <strong>Risk :</strong> {{ alert_value.Risk|default('Not Found')
+            }}<br />
+          </label>
+          {% if alert_value.solution %}
+          <strong>Solution:</strong>
+          <span
+            class="solution-toggle"
+            onclick="toggleSolution('{{ alert_key }}')"
+          >
+            (Click to {{ 'Hide' if alert_value.show_solution else 'Show' }})
+          </span>
+          <div id="{{ alert_key }}-solution" style="display: none">
+            {{ alert_value.solution|safe|default('Not Found') }}
+          </div>
+
+          {% else %}
+          <em>No solution provided.</em>
+          {% endif %}
+          <br />
+          <strong>Instances:</strong>
+          <span
+            class="instances-toggle"
+            onclick="toggleContent('{{ alert_key }}-instances')"
+          >
+            (Click to {{ 'Hide' if alert_value.show_instances else 'Show' }})
+          </span>
+          <div id="{{ alert_key }}-instances" style="display: none">
+            <ul>
+              {% if alert_value.instances %} {% for instance in
+              alert_value.instances %}
+              <li>
+                <strong>Evidence: </strong>{{instance.evidence}}<strong>
+                  at </strong
+                >{{ instance.uri }}
+              </li>
+              {% endfor %} {% else %}
+              <li>No instances found.</li>
+              {% endif %}
+            </ul>
+          </div>
+        </li>
+        {% endfor %} {% else %}
+        <li>No web vulnerabilities found.</li>
+        {% endif %}
+      </ul>
+      <input type="hidden" name="host" value="{{ host }}" />
+      <button type="submit">Acknowledge Selected Alerts</button>
+    </form>
+    <script>
+      function toggleSolution(alertKey) {
+        var solutionDiv = document.getElementById(alertKey + "-solution");
+        var solutionToggle = document.querySelector(
+          "[onclick=\"toggleSolution('" + alertKey + "')\"]"
+        );
+
+        if (
+          solutionDiv.style.display === "none" ||
+          solutionDiv.style.display === ""
+        ) {
+          solutionDiv.style.display = "block";
+          solutionToggle.innerHTML = "(Click to Hide)";
+        } else {
+          solutionDiv.style.display = "none";
+          solutionToggle.innerHTML = "(Click to Show)";
+        }
+      }
+      function toggleContent(contentId) {
+        var contentDiv = document.getElementById(contentId);
+        var contentToggle = document.querySelector(
+          "[onclick=\"toggleContent('" + contentId + "')\"]"
+        );
+
+        if (
+          contentDiv.style.display === "none" ||
+          contentDiv.style.display === ""
+        ) {
+          contentDiv.style.display = "block";
+          contentToggle.innerHTML = "(Click to Hide)";
+        } else {
+          contentDiv.style.display = "none";
+          contentToggle.innerHTML = "(Click to Show)";
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DyVAM</title>
+  </head>
+  <body>
+    <h1>Vulnerability Scanned Website</h1>
+
+    {% for host in distinct_hosts %}
+    <p>
+      <span>Host:</span
+      ><a href="{{ url_for('host_page', host=host) }}">{{ host }}</a>
+      - Newest Generated Time: {{ host_time_mapping[host]|default('Not Found')
+      }}
+    </p>
+    {% endfor %}
+  </body>
+</html>

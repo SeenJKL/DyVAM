@@ -1,0 +1,11 @@
+group,OrgCVSS
+A1_Broker_Access_Control,9.3
+A2_Cryptographic_Failures,4.2
+A3_Injection,5.9
+A4_Insecure_Design,2.2
+A5_Security_Misconfiguration,8.4
+A6_Vulnerable_and_Outdated_Components,2.2
+A7_Identification_and_Authentication_Failure,1.3
+A8_Software_and_Data_Integrity_Failures,4.4
+A9_Security_Logging_and_Monitoring_Failures,4.4
+A10_Server-Side_Request_Forgery,4.4
